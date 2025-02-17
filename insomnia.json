@@ -1,0 +1,93 @@
+{
+    "resources": [
+      {
+        "_id": "req_1",
+        "parentId": "fld_1",
+        "modified": 0,
+        "created": 0,
+        "url": "{{ base_url }}/auth/signup",
+        "name": "Sign Up",
+        "description": "",
+        "method": "POST",
+        "body": {
+          "mimeType": "application/json",
+          "text": "{\n  \"email\": \"admin@skipper.com\",\n  \"password\": \"Password1234!\"\n}"
+        },
+        "parameters": [],
+        "headers": [],
+        "authentication": {},
+        "metaSortKey": -1,
+        "isPrivate": false,
+        "settingStoreCookies": true,
+        "settingSendCookies": true,
+        "settingDisableRenderRequestBody": false,
+        "settingEncodeUrl": true,
+        "settingRebuildPath": true,
+        "settingFollowRedirects": "global"
+      },
+      {
+        "_id": "req_2",
+        "parentId": "fld_1",
+        "modified": 0,
+        "created": 0,
+        "url": "{{ base_url }}/auth/signin",
+        "name": "Sign In",
+        "description": "",
+        "method": "POST",
+        "body": {
+          "mimeType": "application/json",
+          "text": "{\n  \"email\": \"admin@skipper.com\",\n  \"password\": \"Password1234!\"\n}"
+        },
+        "parameters": [],
+        "headers": [],
+        "authentication": {},
+        "metaSortKey": -1,
+        "isPrivate": false,
+        "settingStoreCookies": true,
+        "settingSendCookies": true,
+        "settingDisableRenderRequestBody": false,
+        "settingEncodeUrl": true,
+        "settingRebuildPath": true,
+        "settingFollowRedirects": "global"
+      },
+      {
+        "_id": "fld_1",
+        "parentId": "wrk_1",
+        "modified": 0,
+        "created": 0,
+        "name": "Auth API",
+        "description": "",
+        "environment": {},
+        "environmentPropertyOrder": null,
+        "metaSortKey": -1
+      },
+      {
+        "_id": "env_1",
+        "parentId": "wrk_1",
+        "modified": 0,
+        "created": 0,
+        "name": "Development",
+        "data": {
+          "base_url": "http://localhost:8080"
+        },
+        "dataPropertyOrder": {
+          "&": ["base_url"]
+        },
+        "_type": "environment"
+      },
+      {
+        "_id": "wrk_1",
+        "parentId": null,
+        "modified": 0,
+        "created": 0,
+        "name": "Insomnia",
+        "description": "",
+        "scope": "collection",
+        "_type": "workspace"
+      }
+    ],
+    "_type": "export",
+    "__export_format": 4,
+    "__export_date": "2023-10-10T00:00:00.000Z",
+    "__export_source": "insomnia.desktop.app:v2023.4.0"
+  }
