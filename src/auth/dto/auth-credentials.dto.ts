@@ -17,3 +17,10 @@ export class AuthCredentialsDto {
   })
   password: string;
 }
+
+export class CreateUserDto extends AuthCredentialsDto {
+  @IsString()
+  @MinLength(4)
+  @MaxLength(20)
+  name: string;
+}

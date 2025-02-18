@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
-import { AuthCredentialsDto } from './dto/auth-credentials.dto';
+import { AuthCredentialsDto, CreateUserDto } from './dto/auth-credentials.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
@@ -19,12 +19,13 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async createUser(createUserDto: AuthCredentialsDto): Promise<void> {
-    const { email, password } = createUserDto;
+  async createUser(createUserDto: CreateUserDto): Promise<void> {
+    const { email, password, name } = createUserDto;
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
     const user = this.userRepository.create({
       email,
+      name,
       password: hashedPassword,
     });
     try {
@@ -40,7 +41,7 @@ export class AuthService {
     }
   }
 
-  async SignUp(authCredentialsDto: AuthCredentialsDto): Promise<void> {
+  async SignUp(authCredentialsDto: CreateUserDto): Promise<void> {
     return this.createUser(authCredentialsDto);
   }
 
@@ -55,5 +56,25 @@ export class AuthService {
       return { accessToken };
     }
     throw new UnauthorizedException('Please check your login credentials');
+  }
+
+  async refresh(oldToken: string): Promise<{ accessToken: string }> {
+    try {
+      const payload = this.jwtService.verify(oldToken);
+      const { email } = payload;
+      const user = await this.userRepository.findOne({ where: { email } });
+      if (!user) {
+        throw new UnauthorizedException('User not found');
+      }
+      delete payload.exp;
+      delete payload.iat;
+      const accessToken: string = this.jwtService.sign(payload);
+      return { accessToken };
+    } catch (error) {
+      if (error.name === 'TokenExpiredError') {
+        throw new UnauthorizedException('Token has expired');
+      }
+      throw new UnauthorizedException('Invalid token');
+    }
   }
 }
