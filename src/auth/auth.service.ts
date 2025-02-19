@@ -19,6 +19,14 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
+  /**
+   * Creates a new user with the provided details.
+   *
+   * @param createUserDto - An object containing the user's email, password, and name.
+   * @returns A promise that resolves when the user is successfully created.
+   * @throws {ConflictException} If a user with the same email already exists.
+   * @throws {InternalServerErrorException} If an unexpected error occurs during user creation.
+   */
   async createUser(createUserDto: CreateUserDto): Promise<void> {
     const { email, password, name } = createUserDto;
     const salt = await bcrypt.genSalt();
@@ -30,21 +38,33 @@ export class AuthService {
     });
     try {
       await this.userRepository.save(user);
-    } catch (error) {
-      if (error.code === '23505') {
-        throw new ConflictException('Username already exists');
+    } catch (error: unknown) {
+      if (error instanceof ConflictException) {
+        throw new ConflictException('User already exists');
+      } else {
+        throw new InternalServerErrorException();
       }
-      if (error.code === '23502') {
-        throw new ConflictException('Password is required');
-      }
-      throw new InternalServerErrorException();
     }
   }
-
+  /**
+   * Registers a new user with the provided credentials.
+   *
+   * @param authCredentialsDto - An object containing the user's registration details.
+   * @returns A promise that resolves when the user is successfully created.
+   * @throws {ConflictException} If a user with the same email already exists.
+   * @throws {InternalServerErrorException} If an unexpected error occurs during user creation.
+   */
   async SignUp(authCredentialsDto: CreateUserDto): Promise<void> {
     return this.createUser(authCredentialsDto);
   }
 
+  /**
+   * Authenticates a user using their email and password.
+   *
+   * @param authCredentialsDto - An object containing the user's email and password.
+   * @returns A promise that resolves to an object containing a JWT access token.
+   * @throws {UnauthorizedException} If the email or password is incorrect.
+   */
   async SignIn(
     authCredentialsDto: AuthCredentialsDto,
   ): Promise<{ accessToken: string }> {
@@ -58,6 +78,13 @@ export class AuthService {
     throw new UnauthorizedException('Please check your login credentials');
   }
 
+  /**
+   * Refreshes the JWT access token using the provided old token.
+   *
+   * @param oldToken - The expired or soon-to-expire JWT token.
+   * @returns A promise that resolves to an object containing a new access token.
+   * @throws {UnauthorizedException} If the user is not found, the token is expired, or the token is invalid.
+   */
   async refresh(oldToken: string): Promise<{ accessToken: string }> {
     try {
       const payload = this.jwtService.verify(oldToken);
@@ -70,8 +97,8 @@ export class AuthService {
       delete payload.iat;
       const accessToken: string = this.jwtService.sign(payload);
       return { accessToken };
-    } catch (error) {
-      if (error.name === 'TokenExpiredError') {
+    } catch (error: unknown) {
+      if (error instanceof Error && error.name === 'TokenExpiredError') {
         throw new UnauthorizedException('Token has expired');
       }
       throw new UnauthorizedException('Invalid token');

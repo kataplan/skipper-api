@@ -5,19 +5,19 @@ import { Entity, PrimaryGeneratedColumn, ManyToOne, Column } from 'typeorm';
 @Entity()
 export class ExpenseSplit {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @ManyToOne(() => ItineraryItem, (item) => item.expenseSplits, {
     onDelete: 'CASCADE',
   })
-  itineraryItem: ItineraryItem;
+  itineraryItem?: ItineraryItem;
 
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
-  user: User;
+  user!: User;
 
   @Column('decimal')
-  amountDue: number;
+  amountDue: number = 0;
 
   @Column({ default: false })
-  isPaid: boolean;
+  isPaid: boolean = false;
 }

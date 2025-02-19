@@ -8,26 +8,27 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
+import { ItineraryItemCategory } from './ItineraryItemCategory';
 
 @Entity()
 export class ItineraryItem {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @ManyToOne(() => Trip, (trip) => trip.itineraryItems, { onDelete: 'CASCADE' })
-  trip: Trip;
+  trip!: Trip;
 
   @ManyToOne(() => User, { nullable: true })
-  payer: User;
+  payer!: User;
 
   @Column('decimal')
-  amount: number;
+  amount: number = 0;
 
   @Column()
-  description: string;
+  description: string = '';
 
   @Column({ type: 'text' })
-  category: 'hospedaje' | 'transporte' | 'entrada';
+  category: ItineraryItemCategory = ItineraryItemCategory.TRANSPORTATION;
 
   @Column({ nullable: true, type: 'timestamp' })
   arrivalTime?: Date;
@@ -36,5 +37,5 @@ export class ItineraryItem {
   departureTime?: Date;
 
   @OneToMany(() => ExpenseSplit, (split) => split.itineraryItem)
-  expenseSplits: ExpenseSplit[];
+  expenseSplits?: ExpenseSplit[];
 }

@@ -4,26 +4,26 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 @Entity()
 export class User {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column()
-  name: string;
+  name!: string;
 
   @Column({ unique: true })
-  email: string;
+  email!: string;
 
   @Column()
-  password: string;
+  password!: string;
 
   @Column({ default: false })
-  emailVerified: boolean;
+  emailVerified: boolean = false;
 
   @Column({ nullable: true })
-  emailVerificationCode: string;
+  emailVerificationCode?: string;
 
   @Column({ nullable: true })
-  profilePicture: string;
+  profilePicture?: string;
 
   @OneToMany(() => Trip, (trip) => trip.owner)
-  trips: Trip[];
+  trips?: Trip[];
 }
