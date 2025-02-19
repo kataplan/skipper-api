@@ -20,6 +20,6 @@ export class AuthCredentialsDto {
 export class CreateUserDto extends AuthCredentialsDto {
   @IsString()
   @MinLength(4)
-  @MaxLength(20)
+  @MaxLength(48)
   name!: string;
 }
